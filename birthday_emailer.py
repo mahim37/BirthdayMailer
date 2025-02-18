@@ -126,7 +126,7 @@ def process_birthdays():
     sheet_file = os.environ.get("SHEET_FILE", "Birthday List")
     sheet_name = os.environ.get("SHEET_NAME", "test")
     image_path = os.environ.get("IMAGE_PATH", "./image.jpg")
-    sender_email = os.environ.get("SENDER_EMAIL", "your_email@example.com")
+    sender_email = os.environ.get("SENDER_EMAIL", "mahim.gupta@fischerjordan.com")
     smtp_username = os.environ.get("SMTP_USERNAME", sender_email)
     smtp_password = os.environ.get("SMTP_PASSWORD", "")
 
