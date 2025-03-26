@@ -78,23 +78,104 @@ def send_birthday_email(first_name: str, sender_email: str, receiver_email: str,
     Sends a birthday email with an embedded image.
     """
     subject = f"Happy Birthday, {first_name}!"
-    body = f"""
+    text_body = f"""
+    Dear {first_name},
+    
+    Wishing you a very happy birthday! May this special day bring you happiness, success, and fulfillment in every aspect of your life!
+
+    Enjoy your day!
+
+    Best regards,
+    Team Fischer Jordan
+    """
+    
+    html_body = f"""
     <html>
-        <body>
+      <head>
+        <meta charset="UTF-8">
+        <title>Happy Birthday, {first_name}!</title>
+        <style type="text/css">
+          body {{
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f6f6f6;
+          }}
+          .container {{
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+          }}
+          .header {{
+            background: #4CAF50;
+            padding: 20px;
+            text-align: center;
+            color: #ffffff;
+          }}
+          .header h1 {{
+            margin: 0;
+            font-size: 24px;
+          }}
+          .content {{
+            padding: 20px;
+            color: #555555;
+            line-height: 1.5;
+          }}
+          .content p {{
+            margin: 15px 0;
+          }}
+          .footer {{
+            background: #f0f0f0;
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+            color: #888888;
+          }}
+          .image-container {{
+            text-align: center;
+            margin: 20px 0;
+          }}
+          .image-container img {{
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+          }}
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>Happy Birthday, {first_name}!</h1>
+          </div>
+          <div class="content">
             <p>Dear {first_name},</p>
             <p>Wishing you a very happy birthday! May this special day bring you happiness, success, and fulfillment in every aspect of your life!</p>
+            <div class="image-container">
+              <img src="cid:image1" alt="Birthday Image">
+            </div>
+            <p>Enjoy your day!</p>
             <p>Best regards,<br>Team Fischer Jordan</p>
-            <p><img src="cid:image1"></p>
-        </body>
+          </div>
+          <div class="footer">
+            <p>This email was sent with care by Team Fischer Jordan.</p>
+          </div>
+        </div>
+      </body>
     </html>
     """
-    message = MIMEMultipart()
+    message = MIMEMultipart("alternative")
     message["Subject"] = subject
     message["From"] = sender_email
     message["To"] = receiver_email
     if cc_emails:
         message["Cc"] = ", ".join(cc_emails)
-    message.attach(MIMEText(body, "html"))
+    message.attach(MIMEText(html_body, "html"))
+    message.attach(MIMEText(text_body, "plain"))
+    
 
     try:
         with open(image_path, "rb") as image_file:
