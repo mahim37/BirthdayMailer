@@ -243,7 +243,7 @@ Team Fischer Jordan
 
     message = MIMEMultipart("alternative")
     message["Subject"] = subject
-    message["From"] = f"Team Fischer Jordan <{sender_email}>"
+    message["From"] = sender_email
     message["To"] = receiver_email
     if cc_emails:
         message["Cc"] = ", ".join(cc_emails)
