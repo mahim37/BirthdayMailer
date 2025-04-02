@@ -13,10 +13,12 @@ import gspread
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class GoogleSheet:
     """
     A class to interact with Google Sheets using gspread.
     """
+
     def __init__(self, file_name: str, sheet_name: str) -> None:
         # Load credentials from the environment variable
         google_creds = os.environ.get("GOOGLE_CREDENTIALS")
@@ -39,7 +41,14 @@ class GoogleSheet:
             result = chr(65 + remainder) + result
         return result
 
-    def write_list(self, row: int, column: int, list_entry: List[str], vertical: bool = False, user_entered: bool = True) -> None:
+    def write_list(
+        self,
+        row: int,
+        column: int,
+        list_entry: List[str],
+        vertical: bool = False,
+        user_entered: bool = True,
+    ) -> None:
         """Writes a list of values to the sheet, either horizontally or vertically."""
         cell_range = self.letter_range(
             row,
@@ -72,12 +81,18 @@ class GoogleSheet:
         col_index = self.col_search(column_header_name, header_row)
         # Ensure we handle potential errors if col_values returns fewer rows than expected
         all_values = self.sheet.col_values(col_index)
-        return all_values[header_row:] # Get values starting after the header row
+        return all_values[header_row:]  # Get values starting after the header row
 
 
-def send_birthday_email(first_name: str, sender_email: str, receiver_email: str,
-                        cc_emails: List[str], smtp_username: str, smtp_password: str,
-                        image_path: str) -> None:
+def send_birthday_email(
+    first_name: str,
+    sender_email: str,
+    receiver_email: str,
+    cc_emails: List[str],
+    smtp_username: str,
+    smtp_password: str,
+    image_path: str,
+) -> None:
     """
     Sends a beautifully formatted birthday email with an embedded image.
     """
@@ -261,37 +276,48 @@ Team Fischer Jordan
             # The Content-ID should match the src in the <img> tag (cid:image1)
             image_part.add_header("Content-ID", "<image1>")
             # Add Content-Disposition as inline for better compatibility
-            image_part.add_header('Content-Disposition', 'inline', filename=os.path.basename(image_path))
+            image_part.add_header(
+                "Content-Disposition", "inline", filename=os.path.basename(image_path)
+            )
             message.attach(image_part)
         else:
-             logger.warning(f"Image file not found at {image_path}. Sending email without image.")
+            logger.warning(
+                f"Image file not found at {image_path}. Sending email without image."
+            )
 
     except Exception as e:
         logger.error(f"Error attaching image from {image_path}: {e}")
-        pass # Continue sending email without the image if attach fails
+        pass  # Continue sending email without the image if attach fails
 
     # --- Send Email ---
     smtp_server = "smtp.gmail.com"
-    smtp_port = 587 # Standard TLS port
+    smtp_port = 587  # Standard TLS port
 
     try:
         with smtplib.SMTP(smtp_server, smtp_port) as server:
-            server.ehlo() # Greet the server
-            server.starttls() # Start TLS encryption
-            server.ehlo() # Re-greet after TLS
+            server.ehlo()  # Greet the server
+            server.starttls()  # Start TLS encryption
+            server.ehlo()  # Re-greet after TLS
             server.login(smtp_username, smtp_password)
             recipients = [receiver_email] + cc_emails
             server.sendmail(sender_email, recipients, message.as_string())
-            logger.info(f"Successfully sent birthday email to {receiver_email} (CC: {', '.join(cc_emails) if cc_emails else 'None'})")
+            logger.info(
+                f"Successfully sent birthday email to {receiver_email} (CC: {', '.join(cc_emails) if cc_emails else 'None'})"
+            )
     except smtplib.SMTPAuthenticationError as e:
-         logger.error(f"SMTP Authentication Error: Check username/password or app password settings. Details: {e}")
-         raise # Reraise critical auth errors
+        logger.error(
+            f"SMTP Authentication Error: Check username/password or app password settings. Details: {e}"
+        )
+        raise  # Reraise critical auth errors
     except smtplib.SMTPServerDisconnected:
-        logger.error("SMTP Server disconnected unexpectedly. Check network or server status.")
+        logger.error(
+            "SMTP Server disconnected unexpectedly. Check network or server status."
+        )
         raise
     except Exception as e:
         logger.error(f"Error sending email to {receiver_email}: {e}")
-        raise # Reraise other critical SMTP errors
+        raise  # Reraise other critical SMTP errors
+
 
 def process_birthdays():
     """
@@ -313,20 +339,23 @@ def process_birthdays():
         logger.critical("SMTP_PASSWORD environment variable not set. Exiting.")
         return
     if not os.environ.get("GOOGLE_CREDENTIALS"):
-         logger.critical("GOOGLE_CREDENTIALS environment variable not set. Exiting.")
-         return
+        logger.critical("GOOGLE_CREDENTIALS environment variable not set. Exiting.")
+        return
     # Check if image exists early
     if not os.path.exists(image_path):
-        logger.warning(f"IMAGE_PATH '{image_path}' does not exist. Emails will be sent without an image.")
-
+        logger.warning(
+            f"IMAGE_PATH '{image_path}' does not exist. Emails will be sent without an image."
+        )
 
     # --- Initialize Google Sheet ---
     try:
         googlesheet = GoogleSheet(sheet_file, sheet_name)
-        logger.info(f"Connected to Google Sheet: '{sheet_file}' -> Sheet: '{sheet_name}'")
+        logger.info(
+            f"Connected to Google Sheet: '{sheet_file}' -> Sheet: '{sheet_name}'"
+        )
     except Exception as e:
         logger.error(f"Failed to initialize Google Sheet connection: {e}")
-        return # Cannot proceed without sheet connection
+        return  # Cannot proceed without sheet connection
 
     # --- Fetch Data from Sheet ---
     try:
@@ -338,13 +367,17 @@ def process_birthdays():
 
         # Basic validation: Check if columns have the same length
         if not (len(names) == len(birthdays) == len(emails)):
-            logger.warning("Columns 'Name', 'Birthday', and 'Emails' have different lengths. Data might be misaligned.")
+            logger.warning(
+                "Columns 'Name', 'Birthday', and 'Emails' have different lengths. Data might be misaligned."
+            )
             # You might want to stop here or proceed cautiously
             return
 
     except ValueError as e:
-         logger.error(f"Sheet Error: {e}. Make sure 'Name', 'Birthday', 'Emails' columns exist in row {header_row_number}.")
-         return
+        logger.error(
+            f"Sheet Error: {e}. Make sure 'Name', 'Birthday', 'Emails' columns exist in row {header_row_number}."
+        )
+        return
     except Exception as e:
         logger.error(f"Error fetching data from the sheet: {e}")
         return
@@ -353,13 +386,17 @@ def process_birthdays():
     today = datetime.date.today()
     logger.info(f"Processing birthdays for {today.strftime('%Y-%m-%d')}")
     emails_sent_today = 0
-    
+
     # Collect all valid emails for CC
-    all_valid_emails = [email.strip() for email in emails if email and '@' in email.strip()]
+    all_valid_emails = [
+        email.strip() for email in emails if email and "@" in email.strip()
+    ]
 
     for i, bday_str in enumerate(birthdays):
         if i >= len(names) or i >= len(emails):
-            logger.warning(f"Skipping row {i + header_row_number + 1} due to data length mismatch.")
+            logger.warning(
+                f"Skipping row {i + header_row_number + 1} due to data length mismatch."
+            )
             continue
 
         person_name = names[i].strip()
@@ -367,10 +404,14 @@ def process_birthdays():
 
         # Basic validation for email and name
         if not person_name:
-            logger.warning(f"Skipping row {i + header_row_number + 1}: Name is missing.")
+            logger.warning(
+                f"Skipping row {i + header_row_number + 1}: Name is missing."
+            )
             continue
-        if not receiver_email or '@' not in receiver_email:
-            logger.warning(f"Skipping {person_name} (Row {i + header_row_number + 1}): Invalid or missing email '{receiver_email}'.")
+        if not receiver_email or "@" not in receiver_email:
+            logger.warning(
+                f"Skipping {person_name} (Row {i + header_row_number + 1}): Invalid or missing email '{receiver_email}'."
+            )
             continue
 
         # --- Parse Birthday ---
@@ -380,30 +421,35 @@ def process_birthdays():
             possible_formats = ["%m/%d/%Y", "%m-%d-%Y", "%Y/%m/%d", "%Y-%m-%d", "%m/%d"]
             for fmt in possible_formats:
                 try:
-                    birthday_date = datetime.datetime.strptime(bday_str.strip(), fmt).date()
-                    break # Stop trying formats once one works
+                    birthday_date = datetime.datetime.strptime(
+                        bday_str.strip(), fmt
+                    ).date()
+                    break  # Stop trying formats once one works
                 except ValueError:
-                    continue # Try next format
+                    continue  # Try next format
 
             if birthday_date is None:
-                 raise ValueError("Date format not recognized.")
-
+                raise ValueError("Date format not recognized.")
 
         except Exception as e:
-            logger.warning(f"Skipping {person_name} (Row {i + header_row_number + 1}): Invalid date format '{bday_str}'. Error: {e}")
-            continue # Skip to next person
+            logger.warning(
+                f"Skipping {person_name} (Row {i + header_row_number + 1}): Invalid date format '{bday_str}'. Error: {e}"
+            )
+            continue  # Skip to next person
 
         # --- Check if today is the birthday ---
         if today.month == birthday_date.month and today.day == birthday_date.day:
             try:
-                first_name = person_name.split()[0] # Get the first name
+                first_name = person_name.split()[0]  # Get the first name
 
                 # Prepare CC list: all *other* valid emails from the sheet
                 cc_emails_for_this_person = [
                     email for email in all_valid_emails if email != receiver_email
                 ]
 
-                logger.info(f"MATCH FOUND: {person_name}'s birthday is today! Preparing email to {receiver_email}...")
+                logger.info(
+                    f"MATCH FOUND: {person_name}'s birthday is today! Preparing email to {receiver_email}..."
+                )
 
                 send_birthday_email(
                     first_name=first_name,
@@ -412,13 +458,15 @@ def process_birthdays():
                     cc_emails=cc_emails_for_this_person,
                     smtp_username=smtp_username,
                     smtp_password=smtp_password,
-                    image_path=image_path
+                    image_path=image_path,
                 )
                 emails_sent_today += 1
 
             except Exception as e:
                 # Catch errors during the sending process for this specific person
-                logger.error(f"FAILED to send email for {person_name} to {receiver_email}: {e}")
+                logger.error(
+                    f"FAILED to send email for {person_name} to {receiver_email}: {e}"
+                )
                 # Continue processing the rest of the list
 
     logger.info(f"Birthday processing complete. Sent {emails_sent_today} emails today.")
@@ -434,9 +482,12 @@ def main(event=None, context=None):
         process_birthdays()
     except Exception as e:
         # Catch any unexpected errors not caught within process_birthdays
-        logger.critical(f"CRITICAL UNEXPECTED ERROR in main execution: {e}", exc_info=True) # Log traceback
+        logger.critical(
+            f"CRITICAL UNEXPECTED ERROR in main execution: {e}", exc_info=True
+        )  # Log traceback
     finally:
         logger.info("Birthday Emailer script finished.")
+
 
 if __name__ == "__main__":
     main()

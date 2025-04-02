@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <meta name="supported-color-schemes" content="light dark">
+    <title>Happy Birthday, {first_name}!</title>
+    <style type="text/css">
+        /* Basic Reset & Defaults */
+        body, table, td, div, p, a {{ -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }}
+        table, td {{ mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse; }}
+        img {{ -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }}
+        body {{ margin: 0; padding: 0; width: 100% !important; background-color: #f4f4f4; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }}
+
+        /* Container */
+        .container {{
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 10px; /* Softer corners */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden; /* Keeps corners rounded */
+            border: 1px solid #dddddd; /* Subtle border */
+        }}
+
+        /* Header */
+        .header {{
+            background-color: #5E9CAE; /* A calmer blue/teal */
+            padding: 30px 20px;
+            text-align: center;
+            color: #ffffff;
+        }}
+        .header h1 {{
+            margin: 0;
+            font-size: 26px;
+            font-weight: 500; /* Slightly lighter weight */
+        }}
+
+        /* Content */
+        .content {{
+            padding: 30px 40px; /* More horizontal padding */
+            color: #333333; /* Darker grey for better contrast */
+            line-height: 1.6;
+            font-size: 16px;
+        }}
+        .content p {{
+            margin: 15px 0;
+        }}
+        .content .signature {{
+            margin-top: 30px;
+        }}
+
+        /* Image */
+        .image-container {{
+            text-align: center;
+            margin: 25px 0;
+        }}
+        .image-container img {{
+            max-width: 100%; /* Responsive image */
+            height: auto;
+            border-radius: 8px; /* Match container rounding */
+            display: block; /* Fix potential spacing issues */
+            margin: 0 auto; /* Center image */
+        }}
+
+        /* Footer */
+        .footer {{
+            background-color: #eeeeee; /* Lighter footer background */
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #777777; /* Medium grey */
+            line-height: 1.4;
+        }}
+        .footer p {{
+            margin: 5px 0;
+        }}
+
+        /* Responsive Styles */
+        @media screen and (max-width: 640px) {{
+            .container {{
+                width: 95% !important;
+                margin: 10px auto;
+                border-radius: 5px;
+            }}
+            .content {{
+                padding: 20px 25px; /* Reduce padding on mobile */
+            }}
+            .header {{
+                padding: 20px 15px;
+            }}
+            .header h1 {{
+                font-size: 22px;
+            }}
+            .content {{
+                font-size: 15px;
+            }}
+             .image-container img {{
+                 /* Adjust max-width if needed for smaller screens */
+                 max-width: 90%;
+            }}
+        }}
+
+        /* Basic Dark Mode Styles (Client support varies) */
+        :root {{
+          color-scheme: light dark;
+          supported-color-schemes: light dark;
+        }}
+        @media (prefers-color-scheme: dark) {{
+          body {{ background-color: #121212 !important; }} /* Dark background for the whole page */
+          .container {{ background-color: #1e1e1e !important; border-color: #444444 !important; }}
+          .header {{ background-color: #3a6d7e !important; }} /* Darker shade for header */
+          .content, .content p {{ color: #e0e0e0 !important; }} /* Light text */
+          .footer {{ background-color: #2c2c2c !important; }}
+          .footer p {{ color: #aaaaaa !important; }}
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Happy Birthday, {first_name}!</h1>
+        </div>
+
+        <div class="content">
+            <p>Dear {first_name},</p>
+            <p>Wishing you a very happy birthday! May this special day bring you joy, happiness, success, and fulfillment.</p>
+
+            <div class="image-container">
+                <img src="cid:birthday_image" alt="Happy Birthday from Team {company_name}" style="max-width:100%; height:auto; border-radius: 8px;">
+            </div>
+
+            <p>We hope you have a fantastic day celebrating!</p>
+
+            <p class="signature">Best regards,<br><strong>Team {company_name}</strong></p>
+        </div>
+
+        <div class="footer">
+            <p>&copy; {year} {company_name}. All rights reserved.</p>
+        </div>
+    </div>
+    </body>
+</html>
