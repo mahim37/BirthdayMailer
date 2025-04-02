@@ -28,7 +28,7 @@ jobs:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
           SHEET_FILE: ${{ secrets.SHEET_FILE }}
           SHEET_NAME: ${{ secrets.SHEET_NAME }}
-          IMAGE_PATH: "./image.jpg"
+          IMAGE_PATH: "templates/assets/image.jpg"
           SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
           SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
