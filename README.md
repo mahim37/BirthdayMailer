@@ -89,7 +89,7 @@ Configuration is handled via environment variables. For local development, you c
 
 ## Project Structure
 
-
+```
 ├── .env.example           # Example environment variables template
 ├── .gitignore             # Specifies intentionally untracked files
 ├── config.py              # Loads and validates configuration from environment/.env
@@ -101,7 +101,7 @@ Configuration is handled via environment variables. For local development, you c
 ├── requirements.txt       # Project dependencies
 └── templates/
   ├── birthday_email.html  # HTML template for the birthday email
-
+```
 
 ## Google Sheet Format
 
