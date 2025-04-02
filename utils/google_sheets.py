@@ -2,6 +2,8 @@ import logging
 from typing import List, Optional, Dict
 import gspread
 from gspread.exceptions import APIError, SpreadsheetNotFound, WorksheetNotFound
+from retry_decorator import retry_on_exception, is_gspread_503_error
+
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +49,14 @@ class GoogleSheet:
             )
             raise GoogleSheetError("Google Sheets authentication failed.") from e
 
+    @retry_on_exception(
+        exceptions_to_retry=(APIError,),  # Only retry gspread APIErrors
+        check_exception_callback=is_gspread_503_error,  # Use callback to check for 503
+        max_retries=3,  # Max 3 retries (total 4 attempts)
+        initial_delay=2.0,  # Start with 2 seconds
+        backoff_factor=2.0,  # Double delay each time
+        log_prefix="SheetOpen",  # Custom log prefix
+    )
     def _open_sheet(self) -> None:
         """Opens the specified spreadsheet and worksheet."""
         try:
@@ -191,6 +201,13 @@ class GoogleSheet:
             )
             raise GoogleSheetError("Unexpected error during column search.") from e
 
+    @retry_on_exception(
+        exceptions_to_retry=(APIError,),
+        check_exception_callback=is_gspread_503_error,
+        max_retries=2,
+        initial_delay=1.5,
+        log_prefix="SheetRead",
+    )
     def get_column_values(self, column_index: int, start_row: int = 2) -> List[str]:
         """
         Retrieves all values from a specific column index, starting from a given row.
@@ -237,6 +254,13 @@ class GoogleSheet:
             logger.error(f"Unexpected error fetching column values: {e}", exc_info=True)
             raise GoogleSheetError("Unexpected error fetching column values.") from e
 
+    @retry_on_exception(
+        exceptions_to_retry=(APIError,),
+        check_exception_callback=is_gspread_503_error,
+        max_retries=2,
+        initial_delay=1.5,
+        log_prefix="SheetReadAll",
+    )
     def get_all_records(self, header_row: int = 1) -> List[Dict[str, str]]:
         """
         Fetches all rows from the sheet as a list of dictionaries (headers as keys).

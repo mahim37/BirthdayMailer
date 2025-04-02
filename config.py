@@ -7,6 +7,8 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
+SUPPORTED_DATE_FORMATS = ["%m/%d/%Y", "%m-%d-%Y", "%Y/%m/%d", "%Y-%m-%d", "%m/%d"]
+
 
 class ConfigError(Exception):
     """Custom exception for configuration errors."""
@@ -92,5 +94,3 @@ except Exception as e:
     exit(1)
 
 logger.info("Configuration loaded successfully.")
-
-SUPPORTED_DATE_FORMATS = ["%m/%d/%Y", "%m-%d-%Y", "%Y/%m/%d", "%Y-%m-%d", "%m/%d"]
