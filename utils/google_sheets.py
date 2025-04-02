@@ -2,7 +2,7 @@ import logging
 from typing import List, Optional, Dict
 import gspread
 from gspread.exceptions import APIError, SpreadsheetNotFound, WorksheetNotFound
-from retry_decorator import retry_on_exception, is_gspread_503_error
+from utils.retry_decorator import retry_on_exception, is_gspread_503_error
 
 
 logger = logging.getLogger(__name__)
